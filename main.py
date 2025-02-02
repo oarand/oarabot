@@ -1,10 +1,13 @@
 import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 import subprocess
+import os
+import logging
 
 # Reemplaza 'TU_TOKEN_AQUÍ' con el token que te proporcionó BotFather
 bot = telebot.TeleBot('8148267154:AAEm7gtmJJNzFcdOZltGrVOpHWliR3q8gE8')
 
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 @bot.message_handler(commands=['ip'])
 def show_ip(message):
@@ -17,13 +20,14 @@ def comando_menu(message):
 
 @bot.message_handler(commands=['start'])
 def ejecutar_start_vpn(message):
-    comando = "sudo openvpn --config /etc/openvpn/pt-lis.prod.surfshark.com_tcp.ovpn --auth-user-pass /etc/openvpn/login-ss.fil"
-    try:
-        # Lanza el proceso en segundo plano
-        proceso = subprocess.Popen(comando, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        bot.reply_to(message, f"Proceso iniciado con PID: {proceso.pid}")
-    except Exception as e:
-        bot.reply_to(message, f"Error al iniciar el proceso: {str(e)}")
+    command = "sudo openvpn --config /etc/openvpn/pt-lis.prod.surfshark.com_tcp.ovpn --auth-user-pass /etc/openvpn/login-ss.file"
+    
+    pid = execute_command(command)
+
+    if (pid not None):
+        bot.reply_to(message, f"Proceso iniciado con PID: {pid}")
+    else:
+        bot.reply_to(message, f"Error al iniciar el proceso")
 
 @bot.message_handler(func=lambda message: True)
 def echo_all(message):
@@ -47,3 +51,29 @@ def callback_query(call):
         bot.answer_callback_query(call.id, "Has seleccionado la Opción 3")
 
 bot.polling()
+
+
+
+def execute_command(command):
+    logging.debug(f"Intentando ejecutar el comando: {command}")
+    try:
+        # Lanza el proceso en segundo plano
+        process = subprocess.Popen(
+            command,
+            stdin=subprocess.DEVNULL,
+            close_fds=True,
+            shell=True,
+            preexec_fn=os.setsid
+        )
+        logging.debug("Proceso creado exitosamente")
+        
+        # Desconectar el proceso del proceso padre
+        stdout, stderr = process.communicate()
+        logging.debug(f"Salida estándar: {stdout.decode()}")
+        logging.debug(f"Salida de error: {stderr.decode()}")
+
+        logging.debug(f"Proceso iniciado con PID: {process.pid}")
+        return process.pid
+    except Exception as e:
+        logging.error(f"Error al crear el proceso: {str(e)}")
+        return None
