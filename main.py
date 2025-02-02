@@ -9,6 +9,30 @@ bot = telebot.TeleBot('8148267154:AAEm7gtmJJNzFcdOZltGrVOpHWliR3q8gE8')
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
+def execute_command(command):
+    logging.debug(f"Intentando ejecutar el comando: {command}")
+    try:
+        # Lanza el proceso en segundo plano
+        process = subprocess.Popen(
+            command,
+            stdin=subprocess.DEVNULL,
+            close_fds=True,
+            shell=True,
+            preexec_fn=os.setsid
+        )
+        logging.debug("Proceso creado exitosamente")
+        
+        # Desconectar el proceso del proceso padre
+        #stdout, stderr = process.communicate()
+        #logging.debug(f"Salida estándar: {stdout.decode()}")
+        #logging.debug(f"Salida de error: {stderr.decode()}")
+
+        logging.debug(f"Proceso iniciado con PID: {process.pid}")
+        return process.pid
+    except Exception as e:
+        logging.error(f"Error al crear el proceso: {str(e)}")
+        return None
+
 @bot.message_handler(commands=['ip'])
 def show_ip(message):
     resultado = subprocess.run(['curl', '-4', 'icanhazip.com'], capture_output=True, text=True)
@@ -24,7 +48,7 @@ def ejecutar_start_vpn(message):
     
     pid = execute_command(command)
 
-    if (pid not None):
+    if pid is not None:
         bot.reply_to(message, f"Proceso iniciado con PID: {pid}")
     else:
         bot.reply_to(message, f"Error al iniciar el proceso")
@@ -54,26 +78,3 @@ bot.polling()
 
 
 
-def execute_command(command):
-    logging.debug(f"Intentando ejecutar el comando: {command}")
-    try:
-        # Lanza el proceso en segundo plano
-        process = subprocess.Popen(
-            command,
-            stdin=subprocess.DEVNULL,
-            close_fds=True,
-            shell=True,
-            preexec_fn=os.setsid
-        )
-        logging.debug("Proceso creado exitosamente")
-        
-        # Desconectar el proceso del proceso padre
-        stdout, stderr = process.communicate()
-        logging.debug(f"Salida estándar: {stdout.decode()}")
-        logging.debug(f"Salida de error: {stderr.decode()}")
-
-        logging.debug(f"Proceso iniciado con PID: {process.pid}")
-        return process.pid
-    except Exception as e:
-        logging.error(f"Error al crear el proceso: {str(e)}")
-        return None
