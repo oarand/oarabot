@@ -4,10 +4,14 @@ import subprocess
 import os
 import logging
 
-# Reemplaza 'TU_TOKEN_AQUÍ' con el token que te proporcionó BotFather
-bot = telebot.TeleBot('XXX')
+
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
+TOKEN = os.getenv("TOKEN");
+# Reemplaza 'TU_TOKEN_AQUÍ' con el token que te proporcionó BotFather
+logging.debug(f"Token: {TOKEN}")
+bot = telebot.TeleBot(TOKEN)
 
 def execute_command(command):
     logging.debug(f"Intentando ejecutar el comando: {command}")
