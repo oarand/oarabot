@@ -5,7 +5,7 @@ import os
 import logging
 
 # Reemplaza 'TU_TOKEN_AQUÍ' con el token que te proporcionó BotFather
-bot = telebot.TeleBot('8148267154:AAEm7gtmJJNzFcdOZltGrVOpHWliR3q8gE8')
+bot = telebot.TeleBot('XXX')
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
