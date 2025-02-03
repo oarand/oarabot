@@ -3,11 +3,13 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 import subprocess
 import os
 import logging
+from dotenv import load_dotenv
 
 
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
+load_dotenv()
 TOKEN = os.getenv("TOKEN");
 # Reemplaza 'TU_TOKEN_AQUÍ' con el token que te proporcionó BotFather
 logging.debug(f"Token: {TOKEN}")
