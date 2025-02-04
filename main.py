@@ -181,7 +181,7 @@ async def startVPN(location, update: Update, context: ContextTypes.DEFAULT_TYPE)
     """
     # Detener la VPN si ya está en ejecución
     stopVPN(update, context, silent=True)
-    command = f"sudo openvpn --config /etc/openvpn/surf-shark/{location}.prod.surfshark.com_tcp.ovpn --auth-user-pass /etc/openvpn/surf-shark/login-ss.file"
+    command = f"/usr/sbin/openvpn --config /etc/openvpn/surf-shark/{location}.prod.surfshark.com_tcp.ovpn --auth-user-pass /etc/openvpn/surf-shark/login-ss.file"
     process = spawn_command(command)
     if process not in [None, False]:
         await context.bot.send_message(chat_id=update.effective_chat.id, text=f"Proceso iniciado con PID: {process.pid}")
@@ -204,7 +204,7 @@ async def stopVPN(update: Update, context: ContextTypes.DEFAULT_TYPE, silent=Fal
     Sends a message to the user indicating whether the VPN was stopped successfully or if there was an error.
     Logs an error message if the VPN could not be stopped.
     """
-    command = "sudo killall openvpn"
+    command = "killall openvpn"
     res = execute_command(command)
     if res.returncode == 0:
         if not silent:
