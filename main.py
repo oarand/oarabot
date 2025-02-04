@@ -9,7 +9,7 @@ import json
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
+    level=logging.ERROR
 )
 
 def execute_command(command):
@@ -186,6 +186,7 @@ async def startVPN(location, update: Update, context: ContextTypes.DEFAULT_TYPE)
     if process not in [None, False]:
         await context.bot.send_message(chat_id=update.effective_chat.id, text=f"Proceso iniciado con PID: {process.pid}")
     else:
+        logging.error(f"Error al detener el proceso: {process.stderr}")
         await context.bot.send_message(chat_id=update.effective_chat.id, text=f"Error al iniciar el proceso: {process.stderr}")
 
 async def stopVPN(update: Update, context: ContextTypes.DEFAULT_TYPE, silent=False):
