@@ -181,7 +181,7 @@ async def startVPN(location, update: Update, context: ContextTypes.DEFAULT_TYPE)
     """
     # Detener la VPN si ya está en ejecución
     stopVPN(update, context, silent=True)
-    command = f"/usr/sbin/openvpn --config /etc/openvpn/surf-shark/{location}.prod.surfshark.com_tcp.ovpn --auth-user-pass /etc/openvpn/surf-shark/login-ss.file"
+    command = f"openvpn --config {VPN_CONFIGPATH}/{location}.prod.surfshark.com_tcp.ovpn --auth-user-pass {VPN_CONFIGPATH}/login-ss.file"
     process = spawn_command(command)
     if process not in [None, False]:
         await context.bot.send_message(chat_id=update.effective_chat.id, text=f"Proceso iniciado con PID: {process.pid}")
@@ -222,9 +222,6 @@ async def post_init(application):
         ('stop', 'Detiene la VPN')])
 
 def main():
-    load_dotenv()
-    TOKEN = os.getenv("TOKEN")
-    # Reemplaza 'TU_TOKEN_AQUÍ' con el token que te proporcionó BotFather
     logging.info(f"Token: {TOKEN}")
 
     application = ApplicationBuilder().token(TOKEN).post_init(post_init).build()
@@ -238,4 +235,8 @@ def main():
     application.run_polling()
 
 if __name__ == '__main__':
+    load_dotenv()
+    TOKEN = os.getenv("TOKEN")
+    VPN_CONFIGPATH = os.getenv("VPN_CONFIGPATH", "/etc/openvpn/surf-shark")
+
     main()

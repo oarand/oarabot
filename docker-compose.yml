@@ -1,0 +1,13 @@
+services:
+    oarabot:
+        container_name: oarabot
+        image: oarabot:latest
+        environment:
+          - TOKEN=8148267154:AAEzRpPGRP-Hut4DmshiWqk0ealfwhDLang
+          - VPN_CONFIGPATH=/etc/openvpn/surf-shark
+        volumes:
+          - /etc/openvpn:/etc/openvpn
+        restart: always
+        tty: true
+        network_mode: host
+        privileged: true
